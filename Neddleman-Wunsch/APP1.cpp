@@ -15,7 +15,7 @@ struct Celda {
     char direccion;
 };
 
-tuple<int, map<string, map<string, int>>, pair<string, string>> needlemanWunsch(const string& secuencia1, const string& secuencia2) {
+tuple<int, map<string, map<string, int>>, pair<string, string>, int> needlemanWunsch(const string& secuencia1, const string& secuencia2) {
     int m = secuencia1.length();
     int n = secuencia2.length();
 
@@ -46,9 +46,10 @@ tuple<int, map<string, map<string, int>>, pair<string, string>> needlemanWunsch(
     // Encontrar el score
     int score = dp[secuencia1][secuencia2];
 
-    // Realizar el traceback para encontrar las secuencias alineadas
+    // Realizar el traceback para encontrar las secuencias alineadas y el número de rupturas
     string alineamiento_secuencia1 = "";
     string alineamiento_secuencia2 = "";
+    int rupturas = 0;
     int i = m;
     int j = n;
     while (i > 0 || j > 0) {
@@ -63,19 +64,21 @@ tuple<int, map<string, map<string, int>>, pair<string, string>> needlemanWunsch(
             alineamiento_secuencia1 = secuencia1[i - 1] + alineamiento_secuencia1;
             alineamiento_secuencia2 = '-' + alineamiento_secuencia2;
             --i;
+            ++rupturas;  // Incrementar rupturas cuando hay un gap en secuencia2
         }
         else {
             alineamiento_secuencia1 = '-' + alineamiento_secuencia1;
             alineamiento_secuencia2 = secuencia2[j - 1] + alineamiento_secuencia2;
             --j;
+            ++rupturas;  // Incrementar rupturas cuando hay un gap en secuencia1
         }
     }
 
-    return make_tuple(score, dp, make_pair(alineamiento_secuencia1, alineamiento_secuencia2));
+    return make_tuple(score, dp, make_pair(alineamiento_secuencia1, alineamiento_secuencia2), rupturas);
 }
 
-int main() 
-{   
+int main()
+{
     //Parte1
     /*
     string secuencia1 = "AAAC";
@@ -88,8 +91,10 @@ int main()
     int score;
     map<string, map<string, int>> matriz_puntuacion;
     pair<string, string> alineamiento;
-    tie(score, matriz_puntuacion, alineamiento) = needlemanWunsch(secuencia1, secuencia2);
+    int rupturas;
+    tie(score, matriz_puntuacion, alineamiento, rupturas) = needlemanWunsch(secuencia1, secuencia2);
     cout << "Score obtenido: " << score << endl;
+    cout << "Número de rupturas: " << rupturas << endl;
     // Mostrar la matriz de puntuación
     /*
     for (auto& fila : matriz_puntuacion) {
@@ -101,18 +106,22 @@ int main()
     // Mostrar el alineamiento
     cout << "Alineamiento:" << endl;
     cout << alineamiento.first << endl;
+    cout << "____________________________" << endl;
     cout << alineamiento.second << endl;
-
+    
     cout << "COV Y influencia" << endl;
     string secuencia3 = leerSecuenciaCov(1000);
     string secuencia4 = leerSecuenciaInfluencia(1000);
     int score1;
     map<string, map<string, int>> matriz_puntuacion1;
     pair<string, string> alineamiento1;
-    tie(score1, matriz_puntuacion1, alineamiento1) = needlemanWunsch(secuencia3, secuencia4);
+    int rupturas1;
+    tie(score1, matriz_puntuacion1, alineamiento1, rupturas1) = needlemanWunsch(secuencia3, secuencia4);
     cout << "Score obtenido: " << score << endl;
+    cout << "Número de rupturas: " << rupturas1 << endl;
     cout << "Alineamiento:" << endl;
     cout << alineamiento1.first << endl;
+    cout << "____________________________" << endl;
     cout << alineamiento1.second << endl;
 
     cout << "influencia Y BACTERIA" << endl;
@@ -121,11 +130,14 @@ int main()
     int score2;
     map<string, map<string, int>> matriz_puntuacion2;
     pair<string, string> alineamiento2;
-    tie(score2, matriz_puntuacion2, alineamiento2) = needlemanWunsch(secuencia5, secuencia6);
+    int rupturas2;
+    tie(score2, matriz_puntuacion2, alineamiento2, rupturas2) = needlemanWunsch(secuencia5, secuencia6);
     cout << "Score obtenido: " << score << endl;
+    cout << "Número de rupturas: " << rupturas2 << endl;
     cout << "Alineamiento:" << endl;
     cout << alineamiento2.first << endl;
+    cout << "____________________________" << endl;
     cout << alineamiento2.second << endl;
-
+    
     return 0;
 }
